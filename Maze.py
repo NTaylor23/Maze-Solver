@@ -1,18 +1,23 @@
 """
-s x o x o o o o
-o x o o o x x o
-o o x o x o o o
-x o o o x o x o
-o x o x o o x o
-o o o x o x o o
-o x x x o x o x
-o o x o o x o e
+s  x  o  x  o  o  o  o
+o  x  o  o  o  x  x  o
+o  o  x  o  x  o  o  o
+x  o  o  o  x  o  x  o
+o  x  o  x  o  o  x  o
+o  o  o  x  o  x  o  o
+o  x  x  x  o  x  o  x
+o  o  x  o  o  x  o  e
 
 Positional Constraints:
 x, y cannot be <0 or >7
 
+            if (ver in range(0, 7)) or \
+                    (ver, hor) in visited or \
+                    self.matrix[ver][hor] == 'x':
+                return
+            if self.matrix[ver][hor] == 's':
+                return grid
 """
-
 
 def create_matrix(m_string):
     # Works
@@ -53,8 +58,30 @@ class Maze:
 
     def solve_maze(self):
         start, end = self.find_start_end()
-        i, j = start
+        i, j = end
         visited = set()
+
+        def flood_fill(ver, hor, grid, dist):
+
+            if (ver, hor) in range (0, 7):
+                if grid[ver][hor] == 'x':
+                    return
+                elif grid[ver][hor] == 's':
+                    return grid
+                else:
+                    print(ver, hor)
+                    visited.add((ver, hor))
+                    grid[ver][hor] = dist
+                    dist += 1
+                    flood_fill(ver, hor - 1, grid, dist) # Go left
+                    flood_fill(ver, hor + 1, grid, dist) # Go right
+                    flood_fill(ver - 1, hor, grid, dist) # Go up
+                    flood_fill(ver + 1, hor, grid, dist) # Go down
+
+        filled = flood_fill(i, j, self.matrix.copy(), 0)
+        print(filled)
+
+
 
 
 
@@ -69,4 +96,4 @@ oxxxoxox
 ooxooxoe"""
 
 test_maze = Maze(str)
-print(test_maze.find_walls())
+test_maze.solve_maze()
