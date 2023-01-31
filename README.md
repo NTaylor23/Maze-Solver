@@ -1,4 +1,4 @@
-## My First Encounter With OpenCV!
+## Maze Solver
 This was done to learn some skills with OpenCV back in late 2021 and get some practice with backtracking algorithms. 
 
 This program takes a maze image as input and will read the pixels into a (giant) numpy array and solve it via recursive flood-fill. Then it should output the same maze image, but now, solved.
