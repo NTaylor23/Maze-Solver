@@ -3,7 +3,7 @@ import numpy as np
 
 class WriteImage:
 
-    def __init__(self, solved_maze, heatmap, max_value):
+    def __init__(self, solved_maze: list[list], heatmap: list[list], max_value: int):
         self.solved_maze = solved_maze
         self.hm = heatmap
         self.max_value = max_value
@@ -40,6 +40,11 @@ class WriteImage:
         as_np = np.array(result)
         return as_np
 
-    def create_image(self, output_path):
+    def create_image(self, output_path: str) -> cv2:
+        """ write the resulting solved maze to a new image file
+
+        Args:
+            output_path (str): output path on disk
+        """
         return cv2.imwrite(output_path, self.as_np)
 

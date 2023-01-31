@@ -1,15 +1,22 @@
 import copy
-import itertools
 
+def create_matrix(m_string: list[list]) -> str:
+    """ used to create a console-friendly string version of the maze
 
-def create_matrix(m_string):
+    Args:
+        m_string (list[list]): the current maze, as a list
+
+    Returns:
+        str: maze as string, with each row separated by new line characters
+    """
     res = []
     for line in m_string:
         res.append(list(line))
     return res
 
 class Maze:
-    def __init__(self, matrix_import, begin, end):
+
+    def __init__(self, matrix_import: list[list], begin: tuple, end: tuple):
         self.matrix = matrix_import
         self.width, self.height = self.find_width_height()
         self.heatmap = None
@@ -19,7 +26,18 @@ class Maze:
     def find_width_height(self):
         return [len(self.matrix[0]), len(self.matrix)]
 
-    def out_of_bounds(self, ver, hor, visited):
+    def out_of_bounds(self, ver: int, hor: int, visited: set) -> bool:
+        """ checks if a point is in range, checks if a point has been visited,
+        then returns a value of True if the point is in-range and unvisited
+
+        Args:
+            ver (int): y value
+            hor (int): x value
+            visited (set): hash set of visited points
+
+        Returns:
+            bool: _description_
+        """
         if ver not in range(0, self.height) or hor not in range(0, self.width):
             return True
         elif (ver, hor) in visited:
@@ -28,46 +46,66 @@ class Maze:
             return True
         return False
 
-    def set_heatmap(self, heatmap):
-        self.heatmap = heatmap
-
-    def get_heatmap(self):
-        return self.heatmap
-
-    def solve_maze(self):
-        begin, finish = self.begin, self.end
-        i, j = finish
+    def solve_maze(self) -> None:
+        """ delegator function for flood-fill/BFS operations """
+        i, j = self.end
         visited = set()
         matrix_copy = copy.deepcopy(self.matrix)
 
-        def flood_fill(ver, hor, grid, dist):
-            if self.out_of_bounds(ver, hor, visited) or self.matrix[ver][hor] == 's':
+        def flood_fill(y: int, x: int, grid: list[list], dist: int) -> list[list]:
+            """_summary_
+
+            Args:
+                ver (int): y value
+                hor (int): x value
+                grid (list[list]): grid represented as list of lists
+                dist (int): distance from current point to start point
+
+            Returns:
+                list[list]: grid with distance values for each reachable point
+            """
+            if self.out_of_bounds(y, x, visited) or self.matrix[y][x] == 's':
                 return
-            visited.add((ver, hor))
-            grid[ver][hor] = dist
+            
+            visited.add((y, x))
+            grid[y][x] = dist
             dist += 1
 
-            flood_fill(ver, hor - 1, grid, dist)  # Go left
-            flood_fill(ver, hor + 1, grid, dist)  # Go right
-            flood_fill(ver - 1, hor, grid, dist)  # Go up
-            flood_fill(ver + 1, hor, grid, dist)  # Go down
+            flood_fill(y, x - 1, grid, dist)  # Go left
+            flood_fill(y, x + 1, grid, dist)  # Go right
+            flood_fill(y - 1, x, grid, dist)  # Go up
+            flood_fill(y + 1, x, grid, dist)  # Go down
 
             return grid
 
         numeric_grid = flood_fill(i, j, matrix_copy, 0)
+        
         for line in numeric_grid:
             print(list(map(str, line)))
+            
         max = 0
+        
         for line in numeric_grid.copy():
             for element in line:
                 if element in range(0, 1000) and element > max:
                     max = element
+                    
         self.max_value = max
         self.heatmap = numeric_grid.copy()
+        
         i, j = self.begin
+        
         visited.clear()
 
-        def generate_path(ver_hor_distance):
+        def generate_path(ver_hor_distance: tuple) -> list[list]:
+            """_summary_
+
+            Args:
+                ver_hor_distance (tuple): y value, x value, distance value
+
+            Returns:
+                list[list]: the solved maze
+            """
             if not ver_hor_distance:
                 return self.matrix
             else:
@@ -89,10 +127,8 @@ class Maze:
                 generate_path(ver_hor_distance)
 
         generate_path([[i, j, numeric_grid[i][j]]])
+        
         for line in self.matrix:
             print(''.join(line))
-        return self.matrix
-
-    def return_matrix(self):
         return self.matrix
 

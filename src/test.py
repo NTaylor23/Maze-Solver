@@ -1,8 +1,6 @@
 import main
 import cv2
 import uuid
-import os
-import shutil
 
 path_to_output_directory = 'assets/test_resources/output'
 path_to_blank_maze = 'assets/test_resources/verysmall.png'
@@ -31,7 +29,3 @@ try:
 
 except Exception as e:
     raise e
-
-# finally:
-#     # shutil.rmtree(path_to_output_directory)
-#     # os.mkdir(path_to_output_directory)
